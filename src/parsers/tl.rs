@@ -1,7 +1,7 @@
-use crate::structs::{Selectors, Results};
+use crate::structs::{Selectors, Product};
 use crate::utils::convert_to_number;
 
-pub fn parse (input: &str, selectors: Selectors) -> Results {
+pub fn parse (input: &str, selectors: Selectors) -> Product {
     let dom = tl::parse(
         input,
         tl::ParserOptions::default()
@@ -9,17 +9,29 @@ pub fn parse (input: &str, selectors: Selectors) -> Results {
 
     let parser = dom.parser();
 
-    let get = |selector: &str| -> String {
-        let element = dom.query_selector(selector).unwrap()
-            .next().unwrap();
-
-        element.get(parser).unwrap().inner_text(parser).to_string()
+    let get = |selector: &str| -> &tl::Node {
+        dom.query_selector(selector).unwrap()
+            .next().unwrap()
+            .get(parser).unwrap()
     };
 
-    return Results {
-        title: get(selectors.title),
-        image: get(selectors.image),
-        date:  convert_to_number(get(selectors.date))
+    let get_text = |selector: &str| -> String {
+        get(selector)
+            .inner_text(parser).to_string()
+    };
+
+    let get_attribute = |selector: &str, attr: &str| -> String {
+        get(selector)
+            .as_tag().unwrap()
+            .attributes().get(attr).flatten().unwrap()
+            .try_as_utf8_str().unwrap()
+            .to_string()
+    };
+
+    return Product {
+        title: get_text(selectors.title),
+        image: get_attribute(selectors.image, "src"),
+        price:  convert_to_number(get_text(selectors.price))
     };
 }
 

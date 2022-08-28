@@ -7,7 +7,7 @@ use html_parser::structs::Selectors;
 const SELECTORS: Selectors = Selectors {
     title: "title",
     image: "img[src]",
-    date: "span.a-offscreen"
+    price: "span.a-offscreen"
 };
 
 fn criterion_benchmark(c: &mut Criterion) {

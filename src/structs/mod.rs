@@ -1,11 +1,11 @@
 pub struct Selectors <'a> {
     pub title: &'a str,
     pub image: &'a str,
-    pub date: &'a str
+    pub price: &'a str
 }
 
-pub struct Results {
+pub struct Product {
     pub title: String,
     pub image: String,
-    pub date: u32
+    pub price: u32
 }

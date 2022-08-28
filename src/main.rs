@@ -1,25 +1,22 @@
-use std::fs;
+mod client;
+
 use std::error::Error;
 
-use html_parser::parsers::tl::parse as tl_parse;
-use html_parser::structs::Selectors;
+use html_parser::scrapers::Scraper;
+use client::get_client;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let data = fs::read_to_string("website.html")
-        .expect("Unable to read html file");
 
-    let selectors = Selectors {
-        title: "title",
-        image: "img[src]",
-        date: "span.a-offscreen"
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let scraper = Scraper {
+        client: get_client()?
     };
 
-    let result = tl_parse(
-        data.as_str(),
-        selectors
-    );
+    let result = scraper.get(
+        "https://www.amazon.es/quiet-Disipador-calor-calefactor-m%C3%B3dulos/dp/B08YRVM51Q"
+    ).await?;
 
-    print!("title: {}, image: {}, date: {}", result.title, result.image, result.date);
+    print!("title: {}, image: {}, price: {}", result.title, result.image, result.price);
 
     Ok(())
 }
