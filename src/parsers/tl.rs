@@ -35,7 +35,7 @@ pub fn parse (input: &str, selectors: Selectors) -> Result<Product>{
     Ok(Product {
         title: get_text(selectors.title)?,
         image: get_attribute(selectors.image, "src")?,
-        price:  convert_to_number(get_text(selectors.price)?)
+        price: convert_to_number(get_text(selectors.price)?)
     })
 }
 

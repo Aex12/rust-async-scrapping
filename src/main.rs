@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     ).await;
 
     match result {
-        Ok(v) => print!("title: {}\r\nimage: {}\r\n price: {}\r\n", v.title, v.image, v.price),
+        Ok(v) => print!("{}", v),
         Err(e) => print!("Error: {}\r\n", e),
     }
 
