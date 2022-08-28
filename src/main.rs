@@ -14,9 +14,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let result = scraper.get(
         "https://www.amazon.es/quiet-Disipador-calor-calefactor-m%C3%B3dulos/dp/B08YRVM51Q"
-    ).await?;
+    ).await;
 
-    print!("title: {}, image: {}, price: {}", result.title, result.image, result.price);
+    match result {
+        Ok(v) => print!("title: {}\r\nimage: {}\r\n price: {}\r\n", v.title, v.image, v.price),
+        Err(e) => print!("Error: {}\r\n", e),
+    }
 
     Ok(())
 }
