@@ -1,0 +1,19 @@
+[package]
+name = "html_parser"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tl = "0.7.7"
+html5gum = "0.5.2"
+lol_html = "0.3.1"
+html5ever = "0.26.0"
+
+[dev-dependencies]
+criterion = "0.3.6"
+
+[[bench]]
+name = "bench_parser"
+harness = false
