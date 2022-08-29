@@ -22,17 +22,18 @@ async fn main() -> Result<()> {
 
     let results = stream::iter(urls)
         .map(|url| {
-            let scraper = &scraper;
-            async move {
+            let scraper = scraper.clone();
+            tokio::spawn(async move {
                 scraper.get(url).await
-            }
+            })
         })
         .buffer_unordered(CONCURRENT_REQUESTS);
 
     results
         .for_each(|result| async {
             match result {
-                Ok(v) => print!("{}", v),
+                Ok(Ok(v)) => print!("{}", v),
+                Ok(Err(e)) => print!("{}", e),
                 Err(e) => print!("Error: {}\r\n", e),
             }
         })
