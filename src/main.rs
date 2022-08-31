@@ -1,12 +1,11 @@
 use anyhow::Result;
 use debug_print::debug_println as dprintln;
+use tokio::time::{sleep, Duration};
 
-use futures::{stream, StreamExt};
-use tokio;
+// use futures::{stream, StreamExt};
 
 use html_parser::scrapers::Scraper;
 
-const CONCURRENT_REQUESTS: usize = 2;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -17,27 +16,21 @@ async fn main() -> Result<()> {
         "https://www.amazon.es/dp/B08YRVM51Q",
         "https://www.amazon.es/dp/B07TN2RX2K",
         "https://www.amazon.es/dp/B07LCQLC8Y",
-        "https://www.amazon.es/dp/B09HSQQWCL"
+        "https://www.amazon.es/dp/B09HSQQWCL",
     ];
 
-    let results = stream::iter(urls)
-        .map(|url| {
+    loop {
+        scraper.wait().await;
+        for url in urls {
             let scraper = scraper.clone();
             tokio::spawn(async move {
-                scraper.get(url).await
-            })
-        })
-        .buffer_unordered(CONCURRENT_REQUESTS);
-
-    results
-        .for_each(|result| async {
-            match result {
-                Ok(Ok(v)) => print!("{}", v),
-                Ok(Err(e)) => print!("{}", e),
-                Err(e) => print!("Error: {}\r\n", e),
-            }
-        })
-        .await;
-
-    Ok(())
+                let result = scraper.get(url).await;
+                match result {
+                    Ok(v) => print!("{}", v),
+                    Err(e) => eprintln!("Error: {}", e),
+                }
+            });
+            sleep(Duration::from_millis(100)).await;
+        }
+    }
 }
